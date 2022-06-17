@@ -1,0 +1,9 @@
+build
+tmp
+.dep
+*.elf
+*.bin
+*~
+*.orig
+*.rej
+
