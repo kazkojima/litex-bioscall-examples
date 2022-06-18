@@ -15,7 +15,7 @@ $(PROGRAM).bin: $(PROGRAM).elf
 	$(OBJCOPY) -O binary $(PROGRAM).elf $(PROGRAM).bin
 
 $(PROGRAM).elf: $(SRC) $(TOP)/lib/stubs.s
-	$(CC) $(CFALGS) $(INCLUDE_DIRS) $(CRT_FLAGS) $(SRC) -o $(PROGRAM).elf $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INCLUDE_DIRS) $(CRT_FLAGS) $(SRC) -o $(PROGRAM).elf $(LDFLAGS)
 
 genstubs: $(TOP)/lib/stubs.s
 
