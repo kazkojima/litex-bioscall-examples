@@ -23,6 +23,38 @@ make
 
 makes app.bin which can be booted from LiteX bios with serial/SD/net-boot.
 
+[> Tips
+--------
+**TODO**
+
+Here is an experimental patch to the litex with which bios can be built without -flto.
+
+```
+diff --git a/litex/soc/software/common.mak b/litex/soc/software/common.mak
+index e7ffe9b2..6987b113 100644
+--- a/litex/soc/software/common.mak
++++ b/litex/soc/software/common.mak
+@@ -54,7 +54,10 @@ INCLUDES = -I$(PICOLIBC_DIRECTORY)/newlib/libc/tinystdio \
+            -I$(BUILDINC_DIRECTORY) \
+            -I$(BUILDINC_DIRECTORY)/../libc \
+            -I$(CPU_DIRECTORY)
+-COMMONFLAGS = $(DEPFLAGS) -Os $(CPUFLAGS) -g3 -fomit-frame-pointer -Wall -fno-builtin -fno-stack-protector -flto $(INCLUDES)
++COMMONFLAGS = $(DEPFLAGS) -Os $(CPUFLAGS) -g3 -fomit-frame-pointer -Wall -fno-builtin -fno-stack-protector $(INCLUDES)
++ifneq ($(NOLTO),1)
++COMMONFLAGS += -flto
++endif
+ ifneq ($(CPUFAMILY), arm)
+ COMMONFLAGS += -fexceptions
+ endif
+
+```
+
+For example,
+```
+NOLTO=1 ./colorlite_i5.py ... --build
+```
+makes non LTOed bios when building the bit stream for colorlite_i5. Without NOLTO=1, a normal build will be done.
+
 [> Tests
 --------
 **TODO**
