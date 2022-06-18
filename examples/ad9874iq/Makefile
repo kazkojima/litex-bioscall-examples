@@ -1,8 +1,6 @@
 TOP=../..
 PROGRAM=app
 SRC=ad9874iq.c
-LITEX_BUILD_PATH=~/ad9874iq/examples/build
-TARGET=colorlight_i5
 
 include $(TOP)/common.mk
 

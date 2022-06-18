@@ -1,4 +1,6 @@
 LITEX_PATH=~/LiteX/litex
+LITEX_BUILD_PATH=~/ad9874iq/examples/build
+TARGET=colorlight_i5
 
 OBJCOPY=riscv32-unknown-elf-objcopy
 CC=riscv32-unknown-elf-gcc
