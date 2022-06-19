@@ -3,7 +3,7 @@
 
 LiteX bios call examples. Two small examples "basic" and "ad9874iq" are given in examples dir. These applications use LiteX bios functions which give the elementary functions like UART read/write, printf and other basic IO functions.
 
-This is done by analyzing objects in bios program with the tool like nm. Then the addresses of functions can be seen and we can call them. The bad news is that it's not the case for all functions.
+This is done by analyzing objects in bios program with the tool like nm. Then the addresses of functions can be seen and we can call them. The bad news is that it's not the case for all functions. [The process is a bit complicated.](https://github.com/kazkojima/litex-bioscall-examples/blob/main/doc/process.pdf)
 
 Modern compiler technology sometimes performs optimizations which replace functions with other functions when possible and inline functions into other functions. For example, there is foo(x, y) function and assume that all the usage of foo(x, y) happen with x=1. If the compiler believes so, then it can replace foo(x,y) with foo1(y) which is essentially foo(1,y), as often the compiled code of foo(1,y) is simpler than that of foo(x,y). Since this optimization requires to know all usages of foo, all source files including library have to be seen if the function is not static, i.e., this requires "whole program optimization". gcc&clang can do such optimizations with -flto.
 
