@@ -22,7 +22,7 @@ extern char uart_read();
 #define norm_max (4 << mandel_shift)
 
 
-#define RGB888(R,G,B) ((B) << 24 | (G) << 16 | (R))
+#define RGB888(R,G,B) ((B) << 16 | (G) << 8 | (R))
 
 
 uint32_t colormap[21] = {
