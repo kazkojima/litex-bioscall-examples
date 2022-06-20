@@ -22,3 +22,6 @@ $(TOP)/lib/stubs.s: $(BIOS)
 
 clean:
 	rm -rf $(PROGRAM).elf $(PROGRAM).bin
+
+cleanall:
+	rm -rf $(PROGRAM).elf $(PROGRAM).bin $(TOP)/lib/stubs.s
