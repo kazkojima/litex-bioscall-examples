@@ -2,6 +2,9 @@ TOP=../..
 PROGRAM=app
 SRC=ad9874iq.c
 
+# ad9874iq build path instead of default litex-board build path
+LITEX_BUILD_PATH=~/ad9874iq/examples/build
+
 include $(TOP)/common.mk
 
 INCLUDE_DIRS+=-I $(LITEX_BUILD_PATH)/$(TARGET)/software/include -I $(TOP)/include

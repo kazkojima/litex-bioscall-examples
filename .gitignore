@@ -7,3 +7,4 @@ tmp
 *.orig
 *.rej
 
+lib/stubs.s
