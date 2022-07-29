@@ -18,16 +18,21 @@ extern int puts(const char *s);
 extern char uart_read(void);
 
 static uint32_t sys_time_start, sys_time_now;
+static uint64_t clocks;
 static uint32_t millis;
 
 uint32_t sys_now (void)
 {
-  uint32_t ms;
   timer0_update_value_write(1);
   sys_time_now = timer0_value_read();
-  ms = (uint32_t)(sys_time_start - sys_time_now) / (CONFIG_CLOCK_FREQUENCY/1000);
-  millis += ms;
-  sys_time_start = sys_time_now;
+  clocks += (uint32_t)(sys_time_start - sys_time_now);
+  millis += (uint32_t)(clocks / (CONFIG_CLOCK_FREQUENCY/1000));
+  //printf("millis: %d\n", millis);
+  timer0_en_write(0);
+  timer0_load_write(0xffffffff);
+  timer0_en_write(1);
+  timer0_update_value_write(1);
+  sys_time_start = timer0_value_read();
   return millis;
 }
 
@@ -77,6 +82,7 @@ static void tcp_appserver_err(void* arg, err_t err)
 
 static err_t tcp_appserver_poll(void *arg, struct tcp_pcb *pcb)
 {
+  //puts("poll\n");
 }
 
 static err_t tcp_appserver_accept(void *arg, struct tcp_pcb *newpcb, err_t err)
@@ -155,10 +161,3 @@ int main()
   puts("Hit key for reboot");
   uart_read();
 }
-
-
-
-
-
-
-

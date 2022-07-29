@@ -170,6 +170,8 @@ low_level_output(struct netif *netif, struct pbuf *p)
     txlen += q->len;
   }
 
+  flush_cpu_dcache();
+
   /* wait buffer to be available */
   while(!(ethmac_sram_reader_ready_read()));
 
@@ -238,6 +240,7 @@ low_level_input(struct netif *netif)
 
     /* We iterate over the pbuf chain until we have read the entire
      * packet into the pbuf. */
+    flush_cpu_dcache();
     void *bufp = (void *)(ETHMAC_BASE + ETHMAC_SLOT_SIZE * rxslot);
     for (q = p; q != NULL; q = q->next) {
       /* Read enough bytes to fill this pbuf in the chain. The
