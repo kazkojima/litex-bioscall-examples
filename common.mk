@@ -1,6 +1,6 @@
 LITEX_PATH=~/LiteX/litex
 LITEX_BUILD_PATH ?=~/LiteX/litex-boards/litex_boards/targets/build
-TARGET=colorlight_i5
+TARGET ?=colorlight_i5
 
 OBJCOPY=riscv32-unknown-elf-objcopy
 CC=riscv32-unknown-elf-gcc
