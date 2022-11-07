@@ -19,6 +19,7 @@ listcmd = pipeline(`$(NM) -n $(bioself_file)`, `uniq`)
 print(output, "\t.file\t\"stubs.s\"\n\t.option\tnopic\n\t.attribute arch, \"rv32i2p0_m2p0\"\n\t.attribute unaligned_access, 0\n\t.attribute stack_align, 16\n\t.text\n\t.section\t.text.startup,\"ax\",@progbits\n\t.align\t 2\n")
 
 seen = Set(["main"])
+noalias = Set(["uart_read", "uart_write", "uart_read_nonblock"])
 data_section = false
 
 for l in eachline(listcmd)
@@ -34,6 +35,9 @@ for l in eachline(listcmd)
     adr = parse(UInt32, "0x$(obj[1])")
     objtype = obj[2]
     if (match(r"[Tt]", objtype) != nothing && !startswith(sym, "_"))
+        if (sym ∉ noalias)
+            sym = string("_bios_", sym)
+        end
         print(output, "\t.globl\t$(sym)\n\t.type\t$(sym), @function\n$(sym):\n\tli\tt0, $(adr)\n\tjr\tt0\n\t.size\t$(sym), .-$(sym)\n")
     elseif (match(r"[BDRbdr]", objtype) != nothing && !startswith(sym, "_"))
         sym = string("_bios_", sym, "_p")
