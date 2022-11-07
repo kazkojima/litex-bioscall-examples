@@ -2,6 +2,7 @@
 
 #include <generated/csr.h>
 #include <generated/soc.h>
+#include <string.h>
 
 #include "lwip/ip.h"
 #include "lwip/init.h"
@@ -12,10 +13,10 @@ extern err_t ethernetif_init(struct netif *netif);
 extern void ethernetif_input(struct netif *netif) ;
 extern err_t ethernet_input(struct pbuf *p, struct netif *netif);
 
-extern void *memcpy(void *dest, const void *src, unsigned n);
 extern int printf(const char *format, ...);
 extern int puts(const char *s);
 extern char uart_read(void);
+extern void _bios_reboot_handler(void);
 
 static uint32_t sys_time_start, sys_time_now;
 static uint64_t clocks;
@@ -36,28 +37,6 @@ uint32_t sys_now (void)
   return millis;
 }
 
-int memcmp(const void *s1, const void *s2, size_t n)
-{
-  while (n) {
-    int d = (int)*((uint8_t *)s1) - (int)*((uint8_t *)s2);
-    s1++;
-    s2++;
-    n--;
-    if (d)
-      return d;
-  }
-
-  return 0;
-}
-
-/* reduced atoi - only one digit */
-int atoi(const char *s)
-{
-  if (s[0] >= '0' && s[0] <= '9')
-    return s[0] - '0';
-  return 0;
-}
-
 static err_t
 tcp_appserver_recv(void* arg, struct tcp_pcb* pcb, struct pbuf* p, err_t err)
 {
@@ -69,6 +48,14 @@ tcp_appserver_recv(void* arg, struct tcp_pcb* pcb, struct pbuf* p, err_t err)
       for (int i = 0; i < q->len; i++)
 	printf("%02x ", ((char *)(q->payload))[i]);
       puts("\n");
+
+      if (p->len == 8 && 0 == memcmp(p->payload, "led on", 6U))
+	leds_out_write(0);
+      else if (p->len == 9 && 0 == memcmp(p->payload, "led off", 7U))
+	leds_out_write(1);
+      else if (p->len == 8 && 0 == memcmp(p->payload, "reboot", 6U))
+	_bios_reboot_handler();
+
     }
     pbuf_free(p);
   }

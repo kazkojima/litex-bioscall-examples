@@ -2,6 +2,8 @@ TOP=../..
 PROGRAM=app
 SRC=ad9874iq.c
 
+TARGET=gsd_butterstick
+
 # ad9874iq build path instead of default litex-board build path
 LITEX_BUILD_PATH=~/ad9874iq/examples/build
 

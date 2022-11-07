@@ -12,7 +12,9 @@ LiteX bios is build with -flto and some functions are inlined or replaced even i
 
 Unfortunately, the result of compile is rather unstable - affected by slight changes of code, compiler flags and compiler itself.
 
-The non-functional objects in bios are free from such issue. From an example app, their address can be referenced as _bios_symbolname_p. For example, _bios_txbuffer_p is the address of txbuffer in bios. Thus
+The function F in bios is renamed to _bios_F to avoid conflicting with other liblaries, except some UART functions which will be called from libc.
+
+The non-functional objects in bios are free from LTO issue. From an example app, their address can be referenced as _bios_symbolname_p. For example, _bios_txbuffer_p is the address of txbuffer in bios. Thus
 ```
 extern void **_bios_txbuffer_p;
 
