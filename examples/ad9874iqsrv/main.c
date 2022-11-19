@@ -29,7 +29,7 @@ uint32_t sys_now (void)
   timer0_update_value_write(1);
   sys_time_now = timer0_value_read();
   clocks += (uint32_t)(sys_time_start - sys_time_now);
-  millis += (uint32_t)(clocks / (CONFIG_CLOCK_FREQUENCY/1000));
+  millis = (uint32_t)(clocks / (CONFIG_CLOCK_FREQUENCY/1000));
   //printf("millis: %d\n", millis);
   timer0_en_write(0);
   timer0_load_write(0xffffffff);
@@ -53,7 +53,7 @@ static int handle_pwmi_req(uint8_t *p, size_t n)
       ;
     pwmi_data_write(dat);
     pwmi_control_start_write(1);
-    printf("spi write %02x reg=%02x\n", regs[3], regs[2]);
+    //printf("spi write %02x reg=%02x\n", regs[3], regs[2]);
     n -= 4;
     regs += 4;
   }
@@ -73,10 +73,10 @@ tcp_appserver_recv(void* arg, struct tcp_pcb* pcb, struct pbuf* p, err_t err)
 	printf("%02x ", ((char *)(q->payload))[i]);
       puts("\n");
 #endif
-      handle_pwmi_req(q->payload, q->len);
       if (p->len == 8 && 0 == memcmp(p->payload, "reboot", 6U))
 	_bios_reboot_handler();
-
+      else
+	handle_pwmi_req(q->payload, q->len);
     }
     pbuf_free(p);
   }
@@ -86,6 +86,7 @@ tcp_appserver_recv(void* arg, struct tcp_pcb* pcb, struct pbuf* p, err_t err)
 
 static void tcp_appserver_err(void* arg, err_t err)
 {
+  //puts("err\n");
 }
 
 static err_t tcp_appserver_poll(void *arg, struct tcp_pcb *pcb)
@@ -96,7 +97,11 @@ static err_t tcp_appserver_poll(void *arg, struct tcp_pcb *pcb)
 
 static err_t tcp_appserver_accept(void *arg, struct tcp_pcb *newpcb, err_t err)
 {
+  if ((err != ERR_OK) || (newpcb == NULL)) {
+    return ERR_VAL;
+  }
 
+  tcp_setprio(newpcb, TCP_PRIO_MIN);
   tcp_arg(newpcb, NULL);
 
   /* initialize lwIP tcp callbacks */
