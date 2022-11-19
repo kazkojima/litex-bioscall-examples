@@ -27,7 +27,7 @@ uint32_t sys_now (void)
   timer0_update_value_write(1);
   sys_time_now = timer0_value_read();
   clocks += (uint32_t)(sys_time_start - sys_time_now);
-  millis += (uint32_t)(clocks / (CONFIG_CLOCK_FREQUENCY/1000));
+  millis = (uint32_t)(clocks / (CONFIG_CLOCK_FREQUENCY/1000));
   //printf("millis: %d\n", millis);
   timer0_en_write(0);
   timer0_load_write(0xffffffff);
@@ -74,7 +74,11 @@ static err_t tcp_appserver_poll(void *arg, struct tcp_pcb *pcb)
 
 static err_t tcp_appserver_accept(void *arg, struct tcp_pcb *newpcb, err_t err)
 {
+  if ((err != ERR_OK) || (newpcb == NULL)) {
+    return ERR_VAL;
+  }
 
+  tcp_setprio(newpcb, TCP_PRIO_MIN);
   tcp_arg(newpcb, NULL);
 
   /* initialize lwIP tcp callbacks */
